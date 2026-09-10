@@ -8,11 +8,11 @@
 
 ## Read this before the feature list
 
-busyip is a **small pool of real consumer devices**. Every exit is a person who installed our app,
-agreed to share their connection, and is paid for every gigabyte they carry. That is the entire
-supply, and it decides what the product can and cannot do:
+busyip is a **pool of real consumer devices**. Every exit is a person who installed our app, agreed
+to share their connection, and is paid for every gigabyte they carry. That is the entire supply, and
+it decides what the product can and cannot do:
 
-- **Country coverage is thin and it moves.** Asking for a country with no exit online returns
+- **Country coverage is uneven and it moves.** Asking for a country with no exit online returns
   `no_capacity` — we refuse rather than quietly route you through somewhere else. Check coverage
   before you promise a country to anyone.
 - **Availability is not guaranteed.** These are phones. They go offline when a screen locks, an app
@@ -38,18 +38,24 @@ curl -s https://busyip.com/mcp \
        "params":{"name":"busyip_capacity","arguments":{}}}'
 ```
 
-```json
-{ "onlineExits": 175,
-  "byCountry": { "UZ": 154, "KG": 4, "MD": 4, "DE": 3, "KZ": 2, "RU": 2,
-                 "FR": 1, "JP": 1, "SG": 1, "MY": 1, "MX": 1, "TJ": 1 },
-  "byType": { "mobile": 112, "residential": 63, "unclassified": 0 },
-  "ejectedExits": 1,
-  "asOf": "2026-09-09T14:08:36.930Z" }
+You get back the shape below. **The numbers are deliberately not printed here** — any figure in a
+README is a photograph of one minute, and this fleet changes hour to hour. Run the command.
+
+```jsonc
+{
+  "onlineExits":  0,        // exits online, exit-enabled and not currently ejected
+  "byCountry":    {},       // ISO country code -> count; sums to onlineExits
+  "byType":       {},       // mobile / residential / unclassified; sums to onlineExits
+  "ejectedExits": 0,        // removed for failing health — not the same as offline
+  "asOf":         ""        // when the gateway computed it
+}
 ```
 
-That is a live reading and it will differ when you run it — including the concentration. The fleet
-is not evenly spread across those countries and it moves hour to hour, which is why the tool returns
-the breakdown rather than a single number you could plan against.
+Two things the shape will not tell you, so we will. **The fleet is not evenly spread** — one country
+is usually a large majority of it, and which one changes. And **roughly a third of the online set
+turns over within an hour**, because these are phones. If a country matters to your work, read this
+before the run and again after it; if `ejectedExits` moved, the fleet changed underneath you and a
+failure is not evidence of a routing bug.
 
 See [MCP.md](MCP.md) for the seven public tools, the six that need OAuth, and how to point an
 assistant at them.
@@ -154,7 +160,7 @@ Every exit is a person running our app who chose to share their connection and i
 No SDK bundled into someone else's software, no traffic borrowed from users who did not read what
 they agreed to.
 
-That is also why the pool is small, and we would rather say so here than have you discover it in a
+That is also why supply is uneven, and we would rather say so here than have you discover it in a
 benchmark.
 
 ## Acceptable use
